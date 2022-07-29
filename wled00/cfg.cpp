@@ -81,6 +81,8 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
   CJSON(strip.ablMilliampsMax, hw_led[F("maxpwr")]);
   CJSON(strip.milliampsPerLed, hw_led[F("ledma")]);
   CJSON(strip.autoWhiteMode,   hw_led[F("rgbwm")]);
+  CJSON(strip.whiteColorTemperature,   hw_led[F("ct")]);
+  Bus::setWhiteColorTemperature(strip.whiteColorTemperature);
   Bus::setAutoWhiteMode(strip.autoWhiteMode);
   strip.fixInvalidSegments(); // refreshes segment light capabilities (in case auto white mode changed)
   CJSON(correctWB, hw_led["cct"]);
@@ -586,6 +588,7 @@ void serializeConfig() {
   hw_led[F("cb")] = strip.cctBlending;
   hw_led["fps"] = strip.getTargetFps();
   hw_led[F("rgbwm")] = strip.autoWhiteMode;
+  hw_led[F("ct")] = strip.whiteColorTemperature;
 
   JsonArray hw_led_ins = hw_led.createNestedArray("ins");
 

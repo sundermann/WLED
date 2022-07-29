@@ -175,8 +175,14 @@ class Bus {
 				if (_cctBlend > WLED_MAX_CCT_BLEND) _cctBlend = WLED_MAX_CCT_BLEND;
 			#endif
 		}
-		inline static void    setAutoWhiteMode(uint8_t m) { if (m < 4) _autoWhiteMode = m; }
+		inline static void    setAutoWhiteMode(uint8_t m) { if (m < 6) _autoWhiteMode = m; }
 		inline static uint8_t getAutoWhiteMode() { return _autoWhiteMode; }
+
+        static void    setWhiteColorTemperature(uint16_t ct) {
+            _whiteColorTemperature = ct;
+            _rgbTemperature = kelvinToRGB(ct);
+        }
+        inline static uint16_t getWhiteColorTemperature() { return _whiteColorTemperature; }
 
     bool reversed = false;
 
@@ -188,6 +194,8 @@ class Bus {
     bool     _valid = false;
     bool     _needsRefresh = false;
     static uint8_t _autoWhiteMode;
+    static uint16_t _whiteColorTemperature;
+    static RgbColor _rgbTemperature;
     static int16_t _cct;
 		static uint8_t _cctBlend;
   
@@ -201,7 +209,60 @@ class Bus {
       uint8_t b = B(c);
       w = r < g ? (r < b ? r : b) : (g < b ? g : b);
       if (_autoWhiteMode == RGBW_MODE_AUTO_ACCURATE) { r -= w; g -= w; b -= w; } //subtract w in ACCURATE mode
+      if (_autoWhiteMode == RGBW_MODE_TEMPERATURE) {
+          // These values are what the 'white' value would need to
+          // be to get the corresponding color value.
+          double whiteValueForRed = r * 255.0 / _rgbTemperature.R;
+          double whiteValueForGreen = g * 255.0 / _rgbTemperature.G;
+          double whiteValueForBlue = b * 255.0 / _rgbTemperature.B;
+
+          // Set the white value to the highest it can be for the given color
+          // (without over saturating any channel - thus the minimum of them).
+          double minWhiteValue = min(whiteValueForRed,
+                                     min(whiteValueForGreen,
+                                         whiteValueForBlue));
+          w = (minWhiteValue <= 255 ? (uint8_t) minWhiteValue : 255);
+
+          // The rest of the channels will just be the original value minus the
+          // contribution by the white channel.
+          r = (uint8_t)(r - minWhiteValue * _rgbTemperature.R / 255);
+          g = (uint8_t)(g - minWhiteValue * _rgbTemperature.G / 255);
+          b = (uint8_t)(b - minWhiteValue * _rgbTemperature.B / 255);
+      }
       return RGBW32(r, g, b, w);
+    }
+  private:
+    uint8_t static clip(const double& n, const uint16_t& lower, const uint16_t& upper) {
+        return std::max(lower, std::min(static_cast<uint16_t>(round(n)), upper));
+    }
+
+    static RgbColor kelvinToRGB(uint16_t colorTemperature) {
+        auto temp = colorTemperature / 100;
+
+        double red, green, blue;
+
+        if(temp <= 66){
+            red = 255;
+
+            green = temp;
+            green = 99.4708025861 * std::log(green) - 161.1195681661;
+
+            if( temp <= 19){
+                blue = 0;
+            } else {
+                blue = temp - 10;
+                blue = 138.5177312231 * std::log(blue) - 305.0447927307;
+            }
+        } else {
+            red = temp - 60;
+            red = 329.698727446 * std::pow(red, -0.1332047592);
+
+            green = temp - 60;
+            green = 288.1221695283 * std::pow(green, -0.0755148492 );
+
+            blue = 255;
+        }
+        return { clip(red, 0, 255), clip(green, 0, 255), clip(blue, 0, 255) };
     }
 };
 

@@ -159,11 +159,13 @@ max="255" required><br>Mode: <select name="TW"><option value="0">Wait and set
 White Balance correction: <input type="checkbox" name="CCT"><br><span 
 class="wc">Auto-calculate white channel from RGB:<br><select name="AW"><option 
 value="0">None</option><option value="1">Brighter</option><option value="2">
-Accurate</option><option value="3">Dual</option></select><br>
+Accurate</option><option value="3">Dual</option><option value="5">Temperature
+</option></select><br>White color temperature: <input type="number" class="s" 
+min="0" max="10000" step="100" name="CT" required> K</span><br>
 Calculate CCT from RGB: <input type="checkbox" name="CR"><br>
 CCT additive blending: <input type="number" class="s" min="0" max="100" 
-name="CB" required> %%</span><h3>Advanced</h3>Palette blending: <select 
-name="PB"><option value="0">Linear (wrap if moving)</option><option value="1">
+name="CB" required> %%<h3>Advanced</h3>Palette blending: <select name="PB">
+<option value="0">Linear (wrap if moving)</option><option value="1">
 Linear (always wrap)</option><option value="2">Linear (never wrap)</option>
 <option value="3">None (not recommended)</option></select><br>
 Target refresh rate: <input type="number" class="s" min="1" max="120" name="FR" 

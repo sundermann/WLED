@@ -689,6 +689,7 @@ class WS2812FX {
     uint16_t
       ablMilliampsMax,
       currentMilliamps,
+      whiteColorTemperature = 4500,
       triwave16(uint16_t),
       getLengthTotal(void),
       getLengthPhysical(void),

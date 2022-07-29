@@ -105,6 +105,7 @@
 #define RGBW_MODE_AUTO_ACCURATE   2            //New algorithm. Adds as much white as the darkest RGBW channel and subtracts this amount from each RGB channel
 #define RGBW_MODE_DUAL            3            //Manual slider + auto calculation. Automatically calculates only if manual slider is set to off (0)
 #define RGBW_MODE_LEGACY          4            //Old floating algorithm. Too slow for realtime and palette support
+#define RGBW_MODE_TEMPERATURE     5            //Similar to accurate but takes color temperature of white into account
 
 //realtime modes
 #define REALTIME_MODE_INACTIVE    0

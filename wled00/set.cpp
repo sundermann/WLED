@@ -86,6 +86,8 @@ void handleSettingsSet(AsyncWebServerRequest *request, byte subPage)
     cctFromRgb = request->hasArg(F("CR"));
     strip.cctBlending = request->arg(F("CB")).toInt();
     Bus::setCCTBlend(strip.cctBlending);
+    strip.whiteColorTemperature = (request->arg(F("CT")).toInt());
+    Bus::setWhiteColorTemperature(strip.whiteColorTemperature);
     strip.autoWhiteMode = (request->arg(F("AW")).toInt());
     Bus::setAutoWhiteMode(strip.autoWhiteMode);
     strip.setTargetFps(request->arg(F("FR")).toInt());

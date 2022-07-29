@@ -1266,3 +1266,5 @@ WS2812FX* WS2812FX::instance = nullptr;
 int16_t Bus::_cct = -1;
 uint8_t Bus::_cctBlend = 0;
 uint8_t Bus::_autoWhiteMode = RGBW_MODE_DUAL;
+RgbColor Bus::_rgbTemperature = { 255, 219, 186 };
+uint16_t Bus::_whiteColorTemperature = 4500;
